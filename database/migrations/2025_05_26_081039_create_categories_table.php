@@ -13,6 +13,8 @@ return new class extends Migration
     {
         Schema::create('categories', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->tinyInteger('type'); // 1 = pajamos, -1 = išlaidos
             $table->timestamps();
         });
     }

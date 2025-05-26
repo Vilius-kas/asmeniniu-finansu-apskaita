@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('flows', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('subcategory_id')->constrained('subcategories')->onDelete('cascade');
+            $table->decimal('amount', 10, 2);
+            $table->text('notes')->nullable();
             $table->timestamps();
         });
     }
