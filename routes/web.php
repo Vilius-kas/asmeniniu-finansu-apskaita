@@ -22,4 +22,17 @@ Route::middleware(['auth'])->group(function () {
     
     // Pagrindinis puslapis
     Route::get('/dashboard', [FlowController::class, 'index'])->name('dashboard');
+
+    // Pridėkite šias naujas route'us
+    Route::get('/categories/type/{type}', [CategoryController::class, 'getByType']);
+    Route::get('/subcategories/category/{categoryId}', [SubcategoryController::class, 'getByCategory']);
+    Route::get('/categories/type/{type}', function($type) {
+    $categories = App\Models\Category::where('type', $type)->get();
+    return response()->json($categories);
+    });
+
+    Route::get('/subcategories/category/{categoryId}', function($categoryId) {
+    $subcategories = App\Models\Subcategory::where('category_id', $categoryId)->get();
+    return response()->json($subcategories);
+});
 });

@@ -22,7 +22,7 @@ class SubcategoryController extends Controller
         return view('subcategories.create', compact('categories'));
     }
 
-    
+
     public function store(Request $request)
     {
         $request->validate([
@@ -65,5 +65,12 @@ class SubcategoryController extends Controller
         })->with('category')->get();
 
         return response()->json($subcategories);
+    }
+
+    // SubcategoryController.php
+    public function getByCategory($categoryId)
+    {
+    $subcategories = Subcategory::where('category_id', $categoryId)->get();
+    return response()->json($subcategories);
     }
 }

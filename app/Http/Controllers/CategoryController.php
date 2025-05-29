@@ -14,7 +14,7 @@ class CategoryController extends Controller
         return view('categories.index', compact('categories'));
     }
 
-    
+
     public function create()
     {
         return view('categories.create');
@@ -52,6 +52,12 @@ class CategoryController extends Controller
     {
         $category->delete();
         return redirect()->route('categories.index')->with('success', 'Kategorija ištrinta!');
+    }
+
+    public function getByType($type)
+    {
+    $categories = Category::where('type', $type)->get();
+    return response()->json($categories);
     }
 }
 
