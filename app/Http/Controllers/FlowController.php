@@ -53,8 +53,16 @@ class FlowController extends Controller
 
     public function index()
     {
-    $flows = \App\Models\Flow::with('subcategory.category')->orderBy('created_at', 'desc')->get();
-    return view('flows.index', compact('flows'));
+        $flows = Flow::with('subcategory.category')->orderBy('created_at', 'desc')->get();
+        $balance = Flow::getBalance();
+        return view('flows.index', compact('flows', 'balance'));
     }
 
+    public function destroy(Flow $flow)
+    {
+        $flow->delete();
+        return redirect()->route('flows.index')->with('success', 'Įrašas sėkmingai ištrintas!');
     }
+
+
+}
