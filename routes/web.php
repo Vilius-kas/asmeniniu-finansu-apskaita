@@ -23,7 +23,7 @@ Route::middleware(['auth'])->group(function () {
     // Pagrindinis puslapis
     Route::get('/dashboard', [FlowController::class, 'index'])->name('dashboard');
 
-    // Pridėkite šias naujas route'us
+    // .
     Route::get('/categories/type/{type}', [CategoryController::class, 'getByType']);
     Route::get('/subcategories/category/{categoryId}', [SubcategoryController::class, 'getByCategory']);
     Route::get('/categories/type/{type}', function($type) {
