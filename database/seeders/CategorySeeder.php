@@ -4,31 +4,27 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Category;
-use App\Models\Subcategory;
 
 class CategorySeeder extends Seeder
 {
-    public function run()
-{
-    $transportas = Category::create([
-        'name' => 'Transportas',
-        'type' => -1 // išlaidos
-    ]);
-    Subcategory::create(['name' => 'Kuras', 'category_id' => $transportas->id]);
-    Subcategory::create(['name' => 'Remontas', 'category_id' => $transportas->id]);
+    public function run(): void
+    {
+        $categories = [
+            // Pajamos
+            ['name' => 'Individuali veikla', 'type' => 1],
+            ['name' => 'Darbas pagal darbo sutartį', 'type' => 1],
+            ['name' => 'Kitos pajamos', 'type' => 1],
 
-    $maistas = Category::create([
-        'name' => 'Maistas',
-        'type' => -1 // išlaidos
-    ]);
-    Subcategory::create(['name' => 'Pietūs', 'category_id' => $maistas->id]);
-    Subcategory::create(['name' => 'Pusryčiai', 'category_id' => $maistas->id]);
+            // Išlaidos
+            ['name' => 'Transportas', 'type' => -1],
+            ['name' => 'Maistas', 'type' => -1],
+            ['name' => 'Kitos išlaidos', 'type' => -1],
+            ['name' => 'Laisvalaikis ir pramogos', 'type' => -1],
+            ['name' => 'Pirkiniai ir paslaugos', 'type' => -1],
+        ];
 
-    $pramogos = Category::create([
-        'name' => 'Pramogos',
-        'type' => -1 // išlaidos
-    ]);
-    Subcategory::create(['name' => 'Kinas', 'category_id' => $pramogos->id]);
-}
-
+        foreach ($categories as $category) {
+            Category::firstOrCreate($category);
+        }
+    }
 }

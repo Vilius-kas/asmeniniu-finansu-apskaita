@@ -5,6 +5,9 @@ use App\Http\Controllers\SubcategoryController;
 use App\Http\Controllers\FlowController;
 use App\Http\Controllers\ReportsController;
 
+Route::get('/', function () {
+    return redirect('/login');
+});
 Route::middleware(['auth'])->group(function () {
     // Kategorijos
     Route::resource('categories', CategoryController::class);

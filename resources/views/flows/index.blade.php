@@ -55,9 +55,10 @@
                         </span>
                     </td>
                     <td class="px-6 py-4">{{ $flow->subcategory->name }}</td>
-                    <td class="px-6 py-4 font-mono {{ $flow->amount > 0 ? 'text-green-600' : 'text-red-600' }}">
-                        {{ number_format($flow->amount, 2) }} €
+                    <td class="px-6 py-4 font-mono {{ $flow->subcategory->category->type == 1 ? 'text-green-600' : 'text-red-600' }}">
+                            {{ number_format($flow->amount, 2) }} €
                     </td>
+
                     <td class="px-6 py-4">{{ $flow->notes }}</td>
                     <td class="px-6 py-4 space-x-2">
                         <a href="{{ route('flows.edit', $flow) }}" class="text-blue-600 hover:text-blue-900">Redaguoti</a>

@@ -6,8 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 
 class Flow extends Model
 {
-    protected $fillable = ['subcategory_id', 'amount', 'notes'];
-
+    protected $fillable = [
+    'type',
+    'subcategory_id',
+    'amount',
+    'notes',
+    'user_id',
+    ];
     public function subcategory()
     {
         return $this->belongsTo(Subcategory::class);
@@ -24,11 +29,11 @@ class Flow extends Model
             $q->where('type', -1);
         })->sum('amount');
 
-        return [
-            'pajamos' => $pajamos,
-            'išlaidos' => abs($išlaidos),
-            'balansas' => $pajamos + $išlaidos
-        ];
+    return [
+    'pajamos' => $pajamos,
+    'išlaidos' => abs($išlaidos),
+    'balansas' => $pajamos - abs($išlaidos)
+    ];
     }
 
     

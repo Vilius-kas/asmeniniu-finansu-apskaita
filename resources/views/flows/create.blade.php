@@ -21,36 +21,48 @@
                 <option value="1">Pajamos</option>
                 <option value="-1">Išlaidos</option>
             </select>
+            @error('type')
+                <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+            @enderror
         </div>
 
         <!-- KATEGORIJA -->
         <div id="category-div">
             <label class="block text-sm font-medium mb-2">Kategorija</label>
-            <input type="text" name="category_name" id="category-input" placeholder="Įrašykite kategoriją" class="w-full border rounded px-3 py-2" value="{{ old('category_name', $categoryName ?? '') }}" />
+            <select name="category_id" id="category-select" required class="w-full border rounded px-3 py-2">
+            <option value="">Pasirinkite kategoriją</option>
+            </select>
+             @error('type')
+                <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+             @enderror
         </div>
 
         <!-- SUBKATEGORIJA -->
         <div id="subcategory-div">
             <label class="block text-sm font-medium mb-2">Subkategorija</label>
-            <div class="space-y-2">
-                <!-- Pasirinkimas iš esamų -->
-                <input type="text" name="subcategory_name" id="subcategory-input" placeholder="Įrašykite subkategoriją" class="w-full border rounded px-3 py-2" value="{{ old('subcategory_name', $subcategoryName ?? '') }}" />
-
-                <!-- Paslėptas laukas subkategorijos ID -->
-                <input type="hidden" name="subcategory_id" id="subcategory-id">
-            </div>
+            <input type="text" name="subcategory_name" id="subcategory-input" placeholder="Įrašykite subkategoriją" class="w-full border rounded px-3 py-2" value="{{ old('subcategory_name', $subcategoryName ?? '') }}" />
+            @error('type')
+                <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+            @enderror
         </div>
 
         <div>
             <label class="block text-sm font-medium mb-2">Suma</label>
             <input type="number" name="amount" step="0.01" required class="w-full border rounded px-3 py-2">
+            @error('type')
+                <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+            @enderror   
         </div>
 
         <div>
             <label class="block text-sm font-medium mb-2">Pastabos</label>
             <textarea name="notes" class="w-full border rounded px-3 py-2"></textarea>
+            @error('type')
+                <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+            @enderror
         </div>
 
+        
         <div class="flex space-x-4">
             <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Įrašyti</button>
             <a href="{{ route('flows.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded">Atšaukti</a>
