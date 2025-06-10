@@ -28,10 +28,12 @@ class FlowController extends Controller
     ]);
 
     
-    $subcategory = Subcategory::create([
-        'name' => $validated['subcategory_name'],
+    $subcategory = Subcategory::firstOrCreate(
+    [
+        'name' => trim($validated['subcategory_name']),
         'category_id' => $validated['category_id'],
-    ]);
+    ]
+    );
 
     
     Flow::create([
@@ -63,20 +65,20 @@ class FlowController extends Controller
 
         $subcategoryId = null;
 
-        // Jei pasirinkta esama subkategorija
+        
         if ($request->subcategory_id) {
             $request->validate([
                 'subcategory_id' => 'required|exists:subcategories,id'
             ]);
             $subcategoryId = $request->subcategory_id;
         }
-        // Jei įrašyta nauja subkategorija
+        
         elseif ($request->new_subcategory_name) {
             $request->validate([
                 'new_subcategory_name' => 'required|string|max:255'
             ]);
             
-            // Sukuriame naują subkategoriją
+            
             $subcategory = Subcategory::create([
                 'category_id' => $request->category_id,
                 'name' => trim($request->new_subcategory_name)
@@ -96,12 +98,23 @@ class FlowController extends Controller
         return redirect()->route('flows.index')->with('success', 'Įrašas sėkmingai atnaujintas!');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $flows = Flow::with('subcategory.category')->orderBy('created_at', 'desc')->get();
-        $balance = Flow::getBalance();
-        return view('flows.index', compact('flows', 'balance'));
+    $from = $request->input('from_date');
+    $to = $request->input('to_date');
+
+    $query = Flow::with('subcategory.category')->orderBy('created_at', 'desc');
+
+    if ($from && $to) {
+        $query->whereBetween('created_at', [$from . ' 00:00:00', $to . ' 23:59:59']);
     }
+
+    $flows = $query->paginate(10);
+    $balance = Flow::getBalance();
+
+    return view('flows.index', compact('flows', 'balance', 'from', 'to'));
+    }
+
 
     public function destroy(Flow $flow)
     {

@@ -4,10 +4,9 @@
 <div class="container mx-auto px-4">
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-2xl font-bold">Finansų srautai</h1>
-        <a href="{{ route('flows.create') }}" class="bg-blue-500 text-white px-4 py-2 rounded">Pridėti įrašą</a>
+
     </div>
 
-    <!-- BALANSAS -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
         <div class="bg-blue-100 p-4 rounded">
             <h3 class="font-medium text-blue-800">Balansas</h3>
@@ -32,6 +31,27 @@
     @if(session('success'))
         <div class="bg-green-100 text-green-700 p-3 rounded mb-4">{{ session('success') }}</div>
     @endif
+    <div class="flex justify-between items-end flex-wrap mb-6">
+    <form method="GET" class="flex flex-wrap gap-4 items-end">
+        <div>
+            <label for="from_date" class="block text-sm font-medium text-gray-700">Nuo datos</label>
+            <input type="date" name="from_date" value="{{ request('from_date') }}" class="border px-3 py-2 rounded w-full">
+        </div>
+        <div>
+            <label for="to_date" class="block text-sm font-medium text-gray-700">Iki datos</label>
+            <input type="date" name="to_date" value="{{ request('to_date') }}" class="border px-3 py-2 rounded w-full">
+        </div>
+        <div class="flex gap-2">
+            <button type="submit" class="bg-blue-500 text-white px-4 rounded" style="height: 42px; margin-top: 1.3rem;">Filtruoti</button>
+            <a href="{{ route('flows.index') }}" class="text-gray-600 underline inline-flex items-center px-4 rounded" style="height: 42px; margin-top: 1.3rem;">Išvalyti</a>
+        </div>
+    </form>
+
+    <a href="{{ route('flows.create') }}" class="bg-blue-500 text-white px-4 rounded hover:bg-blue-600 flex items-center justify-center" style="height: 42px; margin-top: 1.3rem;">Pridėti įrašą</a>
+</div>
+
+
+
 
     <div class="bg-white shadow rounded-lg overflow-hidden">
         <table class="min-w-full divide-y divide-gray-200">
@@ -73,5 +93,8 @@
             </tbody>
         </table>
     </div>
+            <div class="mt-4 flex justify-center">
+            {{ $flows->links() }}
+            </div>
 </div>
 @endsection

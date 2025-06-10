@@ -30,25 +30,42 @@ class ReportsController extends Controller
 
         switch ($request->report_type) {
             case 'period':
-                $from = $request->from_date ? Carbon::parse($request->from_date) : Carbon::now()->startOfMonth();
-                $to = $request->to_date ? Carbon::parse($request->to_date) : Carbon::now()->endOfMonth();
-                $data['flows'] = Flow::reportByPeriod($from, $to, $request->flow_type);
+                $from = $request->from_date 
+                    ? Carbon::parse($request->from_date)->startOfDay() 
+                    : Carbon::now()->startOfMonth();
+
+                $to = $request->to_date 
+                    ? Carbon::parse($request->to_date)->endOfDay() 
+                    : Carbon::now()->endOfMonth();
+
+                $data['flows'] = Flow::reportByPeriod($from, $to, $request->flow_type, $request->category_id);
                 $data['period'] = ['from' => $from, 'to' => $to];
                 break;
 
             case 'category':
-                $data['categories'] = Flow::reportByCategory($request->category_id);
+                $from = $request->from_date ? Carbon::parse($request->from_date)->startOfDay() : null;
+                $to = $request->to_date ? Carbon::parse($request->to_date)->endOfDay() : null;
+
+                $data['categories'] = Flow::reportByCategory(
+                $from,
+                $to,
+                $request->flow_type,
+                $request->category_id
+                );
                 break;
+
 
             case 'analysis':
                 $flows = Flow::with('subcategory.category');
+
                 if ($request->flow_type) {
                     $flows->whereHas('subcategory.category', function($q) use ($request) {
                         $q->where('type', $request->flow_type);
                     });
                 }
+
                 $flowsData = $flows->get();
-                
+
                 $data['analysis'] = [
                     'total_count' => $flowsData->count(),
                     'total_amount' => $flowsData->sum('amount'),
@@ -59,6 +76,13 @@ class ReportsController extends Controller
                 break;
         }
 
-        return view('reports.results', compact('data', 'categories', 'request'));
+        return view('reports.results', [
+            'flows' => $data['flows'] ?? null,
+            'categories' => $categories,
+            'request' => $request,
+            'analysis' => $data['analysis'] ?? null,
+            'categoryReport' => $data['categories'] ?? null,
+            'period' => $data['period'] ?? null,
+        ]);
     }
 }
