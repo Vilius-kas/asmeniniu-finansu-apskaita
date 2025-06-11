@@ -6,7 +6,7 @@
 
     @if($request->report_type === 'period')
         @if($flows && count($flows) > 0)
-            <!-- PERIOD ataskaita -->
+            <!--ataskaita pagal periodą-->
             <table class="min-w-full divide-y divide-gray-200 bg-white rounded shadow">
                 <thead class="bg-gray-100">
                     <tr>
@@ -37,7 +37,7 @@
 
     @elseif($request->report_type === 'category')
         @if($categoryReport && count($categoryReport) > 0)
-            <!-- CATEGORY ataskaita -->
+            <!--ataskaita pagal kategorijas-->
             <table class="min-w-full divide-y divide-gray-200 bg-white rounded shadow">
                 <thead class="bg-gray-100">
                     <tr>
@@ -66,9 +66,64 @@
             <p>Pagal pasirinktą kategoriją ir laikotarpį įrašų nerasta.</p>
         @endif
 
-    @elseif($request->report_type === 'analysis')
+
+        @elseif($request->report_type === 'analysis')
+        @if(!empty($analysis['chart']))
+            <h2 class="text-xl font-semibold mt-8 mb-4">Pajamų ir išlaidų diagrama</h2>
+            <canvas id="incomeExpenseChart" height="100"></canvas>
+
+            <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+            <script>
+            const chartData = @json($analysis['chart']);
+
+            const labels = chartData.map(row => row.date);
+            const incomeData = chartData.map(row => row.incomes);
+            const expenseData = chartData.map(row => row.expenses);
+
+            const ctx = document.getElementById('incomeExpenseChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                 labels: labels,
+                    datasets: [
+                        {
+                            label: 'Pajamos',
+                            data: incomeData,
+                            borderColor: 'green',
+                            backgroundColor: 'rgba(0,128,0,0.2)',
+                            fill: false
+                        },
+                       {
+                            label: 'Išlaidos',
+                            data: expenseData,
+                            borderColor: 'red',
+                            backgroundColor: 'rgba(255,0,0,0.2)',
+                            fill: false
+                        }
+                    ]
+                },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    title: {
+                        display: true,
+                        text: 'Pajamų ir išlaidų analizė pagal laikotarpį'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+            });
+        </script>
+        @endif
         @if($analysis)
-            <!-- ANALYSIS ataskaita -->
+            <!--analizės ataskaita-->
             <table class="min-w-full divide-y divide-gray-200 bg-white rounded shadow">
                 <thead class="bg-gray-100">
                     <tr>

@@ -56,25 +56,44 @@ class ReportsController extends Controller
 
 
             case 'analysis':
-                $flows = Flow::with('subcategory.category');
+                $from = $request->from_date 
+                    ? Carbon::parse($request->from_date)->startOfDay() 
+                    : Carbon::now()->subDays(7)->startOfDay();
+                $to = $request->to_date 
+                    ? Carbon::parse($request->to_date)->endOfDay() 
+                     : Carbon::now()->endOfDay();
 
-                if ($request->flow_type) {
-                    $flows->whereHas('subcategory.category', function($q) use ($request) {
-                        $q->where('type', $request->flow_type);
-                    });
-                }
+                 $flows = Flow::with('subcategory.category')
+                    ->whereBetween('created_at', [$from, $to])
+                    ->get();
 
-                $flowsData = $flows->get();
+                 $grouped = $flows->groupBy(function($flow) {
+                    return $flow->created_at->format('Y-m-d');
+                });
+
+                $chartData = [];
+
+                foreach ($grouped as $date => $items) {
+                    $incomes = $items->filter(fn($f) => $f->subcategory->category->type == 1)->sum('amount');
+                    $expenses = $items->filter(fn($f) => $f->subcategory->category->type == -1)->sum('amount');
+
+                    $chartData[] = [
+                        'date' => $date,
+                        'incomes' => $incomes,
+                        'expenses' => $expenses
+                    ];
+                 }
 
                 $data['analysis'] = [
-                    'total_count' => $flowsData->count(),
-                    'total_amount' => $flowsData->sum('amount'),
-                    'min_amount' => $flowsData->min('amount'),
-                    'max_amount' => $flowsData->max('amount'),
-                    'avg_amount' => $flowsData->avg('amount'),
+                    'total_count' => $flows->count(),
+                    'total_amount' => $flows->sum('amount'),
+                    'min_amount' => $flows->min('amount'),
+                    'max_amount' => $flows->max('amount'),
+                    'avg_amount' => $flows->avg('amount'),
+                    'chart' => $chartData
                 ];
-                break;
-        }
+            break;
+    }
 
         return view('reports.results', [
             'flows' => $data['flows'] ?? null,
@@ -83,6 +102,7 @@ class ReportsController extends Controller
             'analysis' => $data['analysis'] ?? null,
             'categoryReport' => $data['categories'] ?? null,
             'period' => $data['period'] ?? null,
+            'chartData' => $data['chartData'] ?? null,
         ]);
     }
 }
