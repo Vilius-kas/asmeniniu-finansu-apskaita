@@ -21,8 +21,9 @@ Route::middleware(['auth'])->group(function () {
     
     // Ataskaitos
     Route::get('reports', [ReportsController::class, 'index'])->name('reports.index');
-    Route::post('reports/generate', [ReportsController::class, 'generate'])->name('reports.generate');
-    
+    Route::match(['get', 'post'], 'reports/generate', [ReportsController::class, 'generate'])->name('reports.generate');
+    Route::get('reports/export', [ReportsController::class, 'export'])->name('reports.export');
+
     // Pagrindinis puslapis
     Route::get('/dashboard', [FlowController::class, 'index'])->name('dashboard');
 

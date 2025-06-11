@@ -109,7 +109,7 @@ class FlowController extends Controller
         $query->whereBetween('created_at', [$from . ' 00:00:00', $to . ' 23:59:59']);
     }
 
-    $flows = $query->paginate(10);
+    $flows = $query->paginate(8);
     $balance = Flow::getBalance();
 
     return view('flows.index', compact('flows', 'balance', 'from', 'to'));

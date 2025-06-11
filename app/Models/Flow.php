@@ -54,7 +54,7 @@ class Flow extends Model
         });
     }
 
-    return $query->get();
+    return $query->orderBy('created_at', 'desc');
     }
 
     public static function reportByCategory($from = null, $to = null, $type = null, $categoryId = null)

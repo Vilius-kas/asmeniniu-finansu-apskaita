@@ -5,6 +5,7 @@
     <h1 class="text-2xl font-bold mb-6">Sugeneruota ataskaita</h1>
 
     @if($request->report_type === 'period')
+
         @if($flows && count($flows) > 0)
             <!--ataskaita pagal periodą-->
             <table class="min-w-full divide-y divide-gray-200 bg-white rounded shadow">
@@ -21,12 +22,12 @@
                 <tbody>
                     @foreach($flows as $flow)
                         <tr class="border-b">
-                            <td class="px-4 py-2">{{ $flow->created_at->format('Y-m-d H:i') }}</td>
-                            <td class="px-4 py-2">{{ $flow->subcategory->category->type === 1 ? 'Pajamos' : 'Išlaidos' }}</td>
-                            <td class="px-4 py-2">{{ $flow->subcategory->category->name }}</td>
-                            <td class="px-4 py-2">{{ $flow->subcategory->name }}</td>
-                            <td class="px-4 py-2">{{ number_format($flow->amount, 2) }} €</td>
-                            <td class="px-4 py-2">{{ $flow->notes }}</td>
+                            <td class="px-4 py-2 text-center">{{ $flow->created_at->format('Y-m-d H:i') }}</td>
+                            <td class="px-4 py-2 text-center">{{ $flow->subcategory->category->type === 1 ? 'Pajamos' : 'Išlaidos' }}</td>
+                            <td class="px-4 py-2 text-center">{{ $flow->subcategory->category->name }}</td>
+                            <td class="px-4 py-2 text-center">{{ $flow->subcategory->name }}</td>
+                            <td class="px-4 py-2 text-center">{{ number_format($flow->amount, 2) }} €</td>
+                            <td class="px-4 py-2 text-center">{{ $flow->notes }}</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -52,12 +53,12 @@
                 <tbody>
                     @foreach($categoryReport as $cat)
                         <tr class="border-b">
-                            <td class="px-4 py-2">{{ $cat->category_name }}</td>
-                            <td class="px-4 py-2">{{ $cat->count }}</td>
-                            <td class="px-4 py-2">{{ number_format($cat->total_amount, 2) }} €</td>
-                            <td class="px-4 py-2">{{ number_format($cat->min_amount, 2) }} €</td>
-                            <td class="px-4 py-2">{{ number_format($cat->max_amount, 2) }} €</td>
-                            <td class="px-4 py-2">{{ number_format($cat->avg_amount, 2) }} €</td>
+                            <td class="px-4 py-2 text-center">{{ $cat->category_name }}</td>
+                            <td class="px-4 py-2 text-center">{{ $cat->count }}</td>
+                            <td class="px-4 py-2 text-center">{{ number_format($cat->total_amount, 2) }} €</td>
+                            <td class="px-4 py-2 text-center">{{ number_format($cat->min_amount, 2) }} €</td>
+                            <td class="px-4 py-2 text-center">{{ number_format($cat->max_amount, 2) }} €</td>
+                            <td class="px-4 py-2 text-center">{{ number_format($cat->avg_amount, 2) }} €</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -66,11 +67,12 @@
             <p>Pagal pasirinktą kategoriją ir laikotarpį įrašų nerasta.</p>
         @endif
 
-
+        
         @elseif($request->report_type === 'analysis')
         @if(!empty($analysis['chart']))
             <h2 class="text-xl font-semibold mt-8 mb-4">Pajamų ir išlaidų diagrama</h2>
             <canvas id="incomeExpenseChart" height="100"></canvas>
+
 
             <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
             <script>
@@ -136,11 +138,11 @@
                 </thead>
                 <tbody>
                     <tr class="border-b">
-                        <td class="px-4 py-2">{{ $analysis['total_count'] }}</td>
-                        <td class="px-4 py-2">{{ number_format($analysis['total_amount'], 2) }} €</td>
-                        <td class="px-4 py-2">{{ number_format($analysis['min_amount'], 2) }} €</td>
-                        <td class="px-4 py-2">{{ number_format($analysis['max_amount'], 2) }} €</td>
-                        <td class="px-4 py-2">{{ number_format($analysis['avg_amount'], 2) }} €</td>
+                        <td class="px-4 py-2 text-center">{{ $analysis['total_count'] }}</td>
+                        <td class="px-4 py-2 text-center">{{ number_format($analysis['total_amount'], 2) }} €</td>
+                        <td class="px-4 py-2 text-center">{{ number_format($analysis['min_amount'], 2) }} €</td>
+                        <td class="px-4 py-2 text-center">{{ number_format($analysis['max_amount'], 2) }} €</td>
+                        <td class="px-4 py-2 text-center">{{ number_format($analysis['avg_amount'], 2) }} €</td>
                     </tr>
                 </tbody>
             </table>
@@ -149,8 +151,24 @@
         @endif
     @endif
 
-    <div class="mt-6">
-        <a href="{{ route('reports.index') }}" class="text-blue-500">← Grįžti atgal</a>
-    </div>
+<div class="mt-6 flex justify-between items-center flex-wrap">
+    
+    <a href="{{ route('reports.index') }}" class="text-blue-500">← Grįžti atgal</a>
+
+    
+    @if($request->report_type === 'period' && $flows && $flows->hasPages())
+        <div class="flex justify-center flex-grow">
+            {{ $flows->appends(request()->except('page'))->links() }}
+        </div>
+    @else
+        <div class="flex-grow"></div> 
+    @endif
+
+    
+    @if($request->report_type)
+        <a href="{{ route('reports.export', $request->all()) }}" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded">
+            ⬇️ Eksportuoti į PDF
+        </a>
+    @endif
 </div>
 @endsection
