@@ -94,7 +94,7 @@
         </table>
     </div>
             <div class="mt-4 flex justify-center">
-            {{ $flows->links() }}
+            {{ $flows->appends(request()->except('page'))->links() }}
             </div>
 </div>
 @endsection
